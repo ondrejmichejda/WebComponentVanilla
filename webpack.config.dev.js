@@ -15,12 +15,5 @@ module.exports = {
         // path: path.resolve(__dirname, 'wwwroot/js'),
         clean: true
     },
-    plugins: [
-        new CopyPlugin({
-            patterns: [
-                { from: '**/*/readme.md', to: "bannersht/readme.md" },
-            ],
-        }),
-    ],
     mode: 'development',
 };

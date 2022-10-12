@@ -4,7 +4,8 @@ const path = require('path');
 module.exports = {
     entry: {
         ondra: '/components/ondra/ondra.js',
-        bannersht: '/components/bannersht/bannersht.js'
+        bannersht: '/components/bannersht/bannersht.js',
+        transfactoringCalculator: '/components/TransfactoringCalculator/TransfactoringCalculator.js',
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js', '.md'],

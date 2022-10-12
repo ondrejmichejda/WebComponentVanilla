@@ -61,18 +61,20 @@ class TransfactoringCalculator extends HTMLElement {
         this.shadow.innerHTML += noUiSliderStyle;
         this.shadow.innerHTML += mainStyle;
 
+        this.currencyChangeSubscription();
+
         this.initSlider1();
         this.initSlider2();
-
-        /*document.addEventListener("DOMContentLoaded", () => {
-            this.initSlider1();
-            this.initSlider2();
-        });*/
+        this.calculatePrice();
     }
+
 
     initSlider1() {
         const rangeSlider = this.shadow.querySelectorAll("#slider1")[0]; //document.getElementById('slider1');
-        console.log(rangeSlider);
+        if(rangeSlider && rangeSlider.noUiSlider){
+            rangeSlider.noUiSlider.destroy();
+        }
+
         noUiSlider.create(rangeSlider, {
             start: this.option.start,
             step: this.option.step,
@@ -105,14 +107,17 @@ class TransfactoringCalculator extends HTMLElement {
                 number = this.FormatEUR.to(number);
             }
             rangeSliderValueElement.innerHTML = number;
-            // this.calculatePrice();
+            this.calculatePrice();
         });
     }
 
     initSlider2() {
-        const rangeSlider2 = this.shadow.querySelectorAll('#slider2')[0];
+        const rangeSlider = this.shadow.querySelectorAll('#slider2')[0];
+        if(rangeSlider && rangeSlider.noUiSlider){
+            rangeSlider.noUiSlider.destroy();
+        }
 
-        noUiSlider.create(rangeSlider2, {
+        noUiSlider.create(rangeSlider, {
             start: [30],
             step: 1,
             connect: [true, false],
@@ -133,36 +138,61 @@ class TransfactoringCalculator extends HTMLElement {
 
         const rangeSliderValueElement2 = this.shadow.querySelectorAll('#slider2-value')[0];
 
-        rangeSlider2.noUiSlider.on('update', (values, handle) => {
+        rangeSlider.noUiSlider.on('update', (values, handle) => {
             const number = parseInt(values[handle]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             rangeSliderValueElement2.innerHTML = number + " dnů";
-            // calculatePrice();
+            this.calculatePrice();
         });
     }
 
     calculatePrice() {
-        throw new Error('not implemented');
-        /*value1 = parseInt($('#slider1-value').text().replace(/\s+/g, '').replace(',', '').replace('€', ''));
-        value2 = parseInt($('#slider2-value').text().replace(/\s+/g, '').replace(',', ''));
+        const value1 = parseInt(this.shadow.querySelectorAll('#slider1-value')[0].textContent.replace(/\s+/g, '').replace(',', '').replace('€', ''));
+        const value2 = parseInt(this.shadow.querySelectorAll('#slider2-value')[0].textContent.replace(/\s+/g, '').replace(',', ''));
 
-        row1 = value1 * 0.8;
-        row3 = value1 / 100 * 0.0666 * value2;
-        row2 = value1 * 0.2 - row3;
+        let row1 = value1 * 0.8;
+        let row3 = value1 / 100 * 0.0666 * value2;
+        let row2 = value1 * 0.2 - row3;
 
-        currency = $('.TransfactoringCalculator .currencies .currency.active').text();
-        if (currency == "CZK") {
-            row1 = FormatCZK.to(row1);
-            row2 = FormatCZK.to(row2);
-            row3 = FormatCZK.to(row3);
+        if (this.option.currency === "CZK") {
+            row1 = this.FormatCZK.to(row1);
+            row2 = this.FormatCZK.to(row2);
+            row3 = this.FormatCZK.to(row3);
         } else {
-            row1 = FormatEUR.to(row1);
-            row2 = FormatEUR.to(row2);
-            row3 = FormatEUR.to(row3);
+            row1 = this.FormatEUR.to(row1);
+            row2 = this.FormatEUR.to(row2);
+            row3 = this.FormatEUR.to(row3);
         }
 
-        $('.TransfactoringCalculator .row1 .right').html(row1);
-        $('.TransfactoringCalculator .row2 .right').html(row2);
-        $('.TransfactoringCalculator .row3 .right').html(row3);*/
+        this.shadow.querySelectorAll('#row1-value')[0].innerHTML = row1;
+        this.shadow.querySelectorAll('#row2-value')[0].innerHTML = row2;
+        this.shadow.querySelectorAll('#row3-value')[0].innerHTML = row3;
+    }
+
+    currencyChangeSubscription() {
+        const btnCZK = this.shadow.querySelectorAll('#cur-czk')[0];
+        const btnEUR = this.shadow.querySelectorAll('#cur-eur')[0];
+        const curSpan = this.shadow.querySelectorAll('#cur-span')[0];
+
+        btnCZK.addEventListener('click', () => {
+            if(this.option === this.optionCZK) return;
+
+            btnEUR.classList.remove('active');
+            btnCZK.classList.add('active');
+            this.option = this.optionCZK;
+            curSpan.textContent = this.option.currency;
+            this.initSlider1();
+        });
+
+        btnEUR.addEventListener('click', () => {
+            if(this.option === this.optionEUR) return;
+
+            btnCZK.classList.remove('active');
+            btnEUR.classList.add('active');
+            this.option = this.optionEUR;
+            curSpan.textContent = this.option.currency;
+            this.initSlider1();
+        });
+
     }
 }
 
