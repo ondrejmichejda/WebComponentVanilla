@@ -55,8 +55,12 @@ class TransfactoringCalculator extends HTMLElement {
         this.render();
     }
 
+    get url() {
+        return this.getAttribute('url') ?? '#';
+    }
+
     render() {
-        this.shadow.innerHTML = view;
+        this.shadow.innerHTML = view(this.url);
 
         this.shadow.innerHTML += noUiSliderStyle;
         this.shadow.innerHTML += mainStyle;

@@ -2,7 +2,7 @@ export const mainStyle = `
 <style>
 
 .calculator {
-    width: 617px;
+    // width: 617px;
     max-width: 100%;
     z-index: 10;
     position:relative
@@ -14,12 +14,9 @@ export const mainStyle = `
 }
 
 .calculator .body, .calculator .outer-body {
-    -webkit-border-top-left-radius: 20px;
-    -webkit-border-top-right-radius: 20px;
-    -moz-border-radius-topleft: 20px;
-    -moz-border-radius-topright: 20px;
-    border-top-left-radius: 20px;
-    border-top-right-radius:20px
+    border-right: : 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
 }
 
 .calculator .body {
@@ -202,7 +199,8 @@ table .right {
     font-weight: 700;
     text-decoration: none;
     border: 2px solid #4b266c;
-    border-radius:20px
+    border-radius:20px;
+    margin-bottom: 20px;
 }
 
 .button:hover {
@@ -227,7 +225,7 @@ table .right {
     
 
     .calculator {
-        width:470px
+        // width:470px
     }
 
     .calculator .header {

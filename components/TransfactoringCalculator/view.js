@@ -1,4 +1,4 @@
-export const view = `
+export const view = (url) => { return `
 
     <div class="calculator">
       <div class="outer-body">
@@ -41,11 +41,10 @@ export const view = `
             </tr>
           </table>
     
-          <div style="text-align: center"><a class="button" href="#">CHCEM ZAČÍT</a></div>
+          <div style="text-align: center"><a class="button" href="${url}">CHCEM ZAČÍT</a></div>
     
         </div>
       </div>
-      <!--<div class="bottom"><img src="zakulacen_trojuhelnik_na_spodku" title="" alt=""></div>-->
     </div>
 
-`;
+`};
