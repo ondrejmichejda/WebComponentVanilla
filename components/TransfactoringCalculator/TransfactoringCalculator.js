@@ -1,7 +1,7 @@
 import {view} from "./view";
 import {mainStyle, noUiSliderStyle} from "./styles";
-import wNumb from "./lib/wNumb.min.js";
-import noUiSlider from "./lib/nouislider.min.js";
+import wNumb from "../../library/wNumb/wNumb.min.js";
+import noUiSlider from "../../library/noUiSlider/nouislider.min.js";
 
 
 class TransfactoringCalculator extends HTMLElement {
@@ -13,7 +13,7 @@ class TransfactoringCalculator extends HTMLElement {
     });
 
     FormatEUR = wNumb({
-        prefix: '€ ',
+        prefix: '€&nbsp;',
         decimals: 0,
         thousand: ','
     });
@@ -36,14 +36,15 @@ class TransfactoringCalculator extends HTMLElement {
         step: 100,
         format: {
             thousand: ',',
-            prefix: '€',
+            prefix: '€&nbsp;',
             suffix: '',
         },
         max: 2400
     }
 
     option;
-
+    translationsRaw = '';
+    translations = null;
 
     constructor() {
         super();
@@ -52,7 +53,23 @@ class TransfactoringCalculator extends HTMLElement {
     }
 
     connectedCallback() {
-        this.render();
+        this.periodicTranslationCheck();
+    }
+
+    periodicTranslationCheck() {
+        setTimeout(() => {
+            let data;
+            try {
+                data = this.innerHTML;
+            } catch (e) { }
+
+            if(this.translationsRaw !== data){
+                this.translationsRaw = data;
+                this.translations = this.translationsRaw.split(';');
+                this.render();
+            }
+            setTimeout(() => this.periodicTranslationCheck(), 1000);
+        });
     }
 
     get url() {
@@ -60,22 +77,21 @@ class TransfactoringCalculator extends HTMLElement {
     }
 
     render() {
-        this.shadow.innerHTML = view(this.url);
+        this.shadow.innerHTML = view(this.translations, this.url);
 
         this.shadow.innerHTML += noUiSliderStyle;
         this.shadow.innerHTML += mainStyle;
 
         this.currencyChangeSubscription();
 
-        this.initSlider1();
-        this.initSlider2();
+        this.initValueSlider();
+        this.initDuedateSlider();
         this.calculatePrice();
     }
 
-
-    initSlider1() {
+    initValueSlider() {
         const rangeSlider = this.shadow.querySelectorAll("#slider1")[0]; //document.getElementById('slider1');
-        if(rangeSlider && rangeSlider.noUiSlider){
+        if (rangeSlider && rangeSlider.noUiSlider) {
             rangeSlider.noUiSlider.destroy();
         }
 
@@ -105,9 +121,9 @@ class TransfactoringCalculator extends HTMLElement {
             // let number = parseInt(values[handle]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "");
             let number = this.FormatCZK.from(values[handle]);
             const currency = this.option.currency;
-            if (currency === "CZK"){
+            if (currency === "CZK") {
                 number = this.FormatCZK.to(number);
-            }else {
+            } else {
                 number = this.FormatEUR.to(number);
             }
             rangeSliderValueElement.innerHTML = number;
@@ -115,9 +131,9 @@ class TransfactoringCalculator extends HTMLElement {
         });
     }
 
-    initSlider2() {
+    initDuedateSlider() {
         const rangeSlider = this.shadow.querySelectorAll('#slider2')[0];
-        if(rangeSlider && rangeSlider.noUiSlider){
+        if (rangeSlider && rangeSlider.noUiSlider) {
             rangeSlider.noUiSlider.destroy();
         }
 
@@ -131,7 +147,7 @@ class TransfactoringCalculator extends HTMLElement {
                 format: wNumb({
                     decimals: 0,
                     thousand: ' ',
-                    suffix: ' dnů'
+                    suffix: this.translations[9] ?? ' undefined'
                 })
             },
             range: {
@@ -178,23 +194,23 @@ class TransfactoringCalculator extends HTMLElement {
         const curSpan = this.shadow.querySelectorAll('#cur-span')[0];
 
         btnCZK.addEventListener('click', () => {
-            if(this.option === this.optionCZK) return;
+            if (this.option === this.optionCZK) return;
 
             btnEUR.classList.remove('active');
             btnCZK.classList.add('active');
             this.option = this.optionCZK;
             curSpan.textContent = this.option.currency;
-            this.initSlider1();
+            this.initValueSlider();
         });
 
         btnEUR.addEventListener('click', () => {
-            if(this.option === this.optionEUR) return;
+            if (this.option === this.optionEUR) return;
 
             btnCZK.classList.remove('active');
             btnEUR.classList.add('active');
             this.option = this.optionEUR;
             curSpan.textContent = this.option.currency;
-            this.initSlider1();
+            this.initValueSlider();
         });
 
     }
