@@ -6,6 +6,7 @@ module.exports = {
         ondra: '/components/ondra/ondra.js',
         bannersht: '/components/bannersht/bannersht.js',
         transfactoringCalculator: '/components/TransfactoringCalculator/TransfactoringCalculator.js',
+        swipeElement: '/components/swiper/swipeElement.js',
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js', '.md'],
