@@ -17,6 +17,10 @@ class SwipeElement extends HTMLElement {
         return this.getAttribute('cycle')
     }
 
+    get direction() {
+        return this.getAttribute('direction');
+    }
+
     connectedCallback() {
         this.render();
     }
@@ -30,6 +34,7 @@ class SwipeElement extends HTMLElement {
             spaceBetween: 0,
             centeredSlides: true,
             loop: true,
+            direction: this.direction ?? 'horizontal',
             autoplay: {
                 delay: +this.cycle ?? 2500,
                 disableOnInteraction: true,

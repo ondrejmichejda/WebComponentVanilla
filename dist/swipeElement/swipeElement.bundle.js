@@ -2,7 +2,7 @@
         translate3d(${t}, ${a}, ${g}px)
         rotateZ(${d.rotate?i:0}deg)
         scale(${w})
-      `;if(d.slideShadows){let e=h.find(".swiper-slide-shadow");(e=0===e.length?D(d,h):e).length&&(e[0].style.opacity=Math.min(Math.max((Math.abs(f)-.5)/.5,0),1))}h[0].style.zIndex=-Math.abs(Math.round(m))+l.length,z(d,h).transform(v)}},setTransition:e=>{var t=b.params.cardsEffect["transformEl"];(t?b.slides.find(t):b.slides).transition(e).find(".swiper-slide-shadow").transition(e),I({swiper:b,duration:e,transformEl:t})},perspective:()=>!0,overwriteParams:()=>({watchSlidesProgress:!0,virtualTranslate:!b.params.cssMode})})}]);class R extends HTMLElement{constructor(){super()}get pictures(){return this.getAttribute("pictures").split(";")??null}get cycle(){return this.getAttribute("cycle")}connectedCallback(){this.render()}render(){this.innerHTML+=`<style>
+      `;if(d.slideShadows){let e=h.find(".swiper-slide-shadow");(e=0===e.length?D(d,h):e).length&&(e[0].style.opacity=Math.min(Math.max((Math.abs(f)-.5)/.5,0),1))}h[0].style.zIndex=-Math.abs(Math.round(m))+l.length,z(d,h).transform(v)}},setTransition:e=>{var t=b.params.cardsEffect["transformEl"];(t?b.slides.find(t):b.slides).transition(e).find(".swiper-slide-shadow").transition(e),I({swiper:b,duration:e,transformEl:t})},perspective:()=>!0,overwriteParams:()=>({watchSlidesProgress:!0,virtualTranslate:!b.params.cssMode})})}]);class R extends HTMLElement{constructor(){super()}get pictures(){return this.getAttribute("pictures").split(";")??null}get cycle(){return this.getAttribute("cycle")}get direction(){return this.getAttribute("direction")}connectedCallback(){this.render()}render(){this.innerHTML+=`<style>
 /**
  * Swiper 8.4.4
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -37,4 +37,4 @@
             <!--<div class="swiper-slide">Slide 1</div>-->
             ${t}
           </div>
-        </div>`})(this.pictures);new C(".myswiper",{spaceBetween:0,centeredSlides:!0,loop:!0,autoplay:{delay:+this.cycle??2500,disableOnInteraction:!0}})}}customElements.define("swipe-element",R)})();
+        </div>`})(this.pictures);new C(".myswiper",{spaceBetween:0,centeredSlides:!0,loop:!0,direction:this.direction??"horizontal",autoplay:{delay:+this.cycle??2500,disableOnInteraction:!0}})}}customElements.define("swipe-element",R)})();
