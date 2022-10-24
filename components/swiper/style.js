@@ -15,9 +15,23 @@ export const swiperStyle = `<style>
 </style>`;
 
 export const myStyle = `<style>
-      .swiper {
+      .myswiper-wrapper{
+        position: relative;
+        height: 100%;
+        width: 100%;
+      }
+      
+      .myswiper-wrapper img {
         width: 100%;
         height: 100%;
+      }
+      
+      .swiper {
+        position: absolute;
+        top: 22%;
+        left: 20%;
+        width: 60%;
+        height: 51%;
       }
 
       .swiper-slide {

@@ -13,6 +13,10 @@ class SwipeElement extends HTMLElement {
         return this.getAttribute('pictures').split(';') ?? null;
     }
 
+    get wrapper() {
+        return this.getAttribute('wrapper');
+    }
+
     get cycle() {
         return this.getAttribute('cycle')
     }
@@ -28,7 +32,7 @@ class SwipeElement extends HTMLElement {
     render() {
         this.innerHTML += swiperStyle;
         this.innerHTML += myStyle;
-        this.innerHTML += html(this.pictures);
+        this.innerHTML += html(this.wrapper, this.pictures);
 
         const swiper = new Swiper(".myswiper", {
             spaceBetween: 0,

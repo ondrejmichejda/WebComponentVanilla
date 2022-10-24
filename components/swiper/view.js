@@ -1,4 +1,4 @@
-export const html = (urls) => {
+export const html = (wrapper, urls) => {
     let divs = '';
 
     if(Array.isArray(urls)) {
@@ -8,12 +8,15 @@ export const html = (urls) => {
     }
 
     return `
-        <div class="swiper myswiper">
-          <div class="swiper-wrapper">
-            <!--<div class="swiper-slide">Slide 1</div>-->
-            ${divs}
-          </div>
-        </div>`;
+            <div class="myswiper-wrapper">
+                <img src="${wrapper}">
+                <div class="swiper myswiper">
+                      <div class="swiper-wrapper">
+                        <!--<div class="swiper-slide">Slide 1</div>-->
+                        ${divs}
+                      </div>
+                </div>
+            </div>`;
 }
 
 function buildSlide(src) {
