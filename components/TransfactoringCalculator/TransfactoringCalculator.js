@@ -6,30 +6,13 @@ import noUiSlider from "../../library/noUiSlider/nouislider.min.js";
 
 class TransfactoringCalculator extends HTMLElement {
 
-    FormatCZK = wNumb({
-        suffix: '&nbsp;CZK ',
-        decimals: 0,
-        thousand: '&nbsp;'
-    });
-
+    FormatCurrency = null;
+    optionCurrency = null;
     FormatEUR = wNumb({
         prefix: '€&nbsp;',
         decimals: 0,
         thousand: ','
     });
-
-    optionCZK = {
-        currency: 'CZK',
-        start: [1000],
-        step: 1000,
-        format: {
-            thousand: '&nbsp;',
-            prefix: '',
-            suffix: '&nbsp;CZK',
-        },
-        max: 60000,
-    }
-
     optionEUR = {
         currency: 'EUR',
         start: [100],
@@ -45,27 +28,97 @@ class TransfactoringCalculator extends HTMLElement {
     option;
     translationsRaw = '';
     translations = null;
+    dayTranslate = 'dnů';
+
+    calculationConstant1 = 0.8;
+    calculationConstant2 = 0.2;
+    calculationConstant3 = 0.0666;
+
+    currency = ' CZK';
+    sliderStart = 1000;
+    sliderStep = 1000;
+    sliderMax = 60000;
 
     constructor() {
         super();
         this.shadow = this.attachShadow({mode: 'open'});
-        this.option = this.optionCZK;
     }
 
     connectedCallback() {
         this.periodicTranslationCheck();
     }
 
+    /**
+     Translation:
+     [0]Orientační kalkulačka;
+     [1]Hodnota faktury s DPH ;
+     [2]Splatnost faktury;
+     [3]Minimální záloha ;
+     [4]80% ihned ;
+     [5]na váš účet;
+     [6]Doplatek po úhradě na váš účet;
+     [7]Cena;
+     [8]CHCI LEPŠÍ NABÍDKU;
+     ------------------------
+     [9] dnů;
+     ------------------------
+     constants for calculation
+     [10]0.8
+     [11]0.2
+     [12]0.0666
+     ------------------------
+     currency constants
+     [13]CZK - currency
+     [14]1000 - slider start
+     [15]1000 - slider step
+     [16]60000 - slider max
+     example:
+     Orientační kalkulačka;Hodnota faktury s DPH ;Splatnost faktury;Minimální záloha ;80% ihned ;na váš účet;Doplatek po
+     úhradě na váš účet;Cena;CHCI LEPŠÍ NABÍDKU; dnů;0.8;0.2;0.0666; CZK;1000;1000;60000
+     */
     periodicTranslationCheck() {
         setTimeout(() => {
             let data;
             try {
                 data = this.innerHTML;
-            } catch (e) { }
+            } catch (e) {
+            }
 
-            if(this.translationsRaw !== data){
+            if (this.translationsRaw !== data) {
                 this.translationsRaw = data;
                 this.translations = this.translationsRaw.split(';');
+
+                try {
+                    this.dayTranslate = this.translations[9] ?? 'dnů';
+                    this.calculationConstant1 = +this.translations[10] ?? 0.8;
+                    this.calculationConstant2 = +this.translations[11] ?? 0.2;
+                    this.calculationConstant3 = +this.translations[12] ?? 0.0666;
+
+                    this.currency = this.translations[13] ?? 'CZK';
+                    this.sliderStart = +this.translations[14] ?? 1000;
+                    this.sliderStep = +this.translations[15] ?? 1000;
+                    this.sliderMax = +this.translations[16] ?? 60000;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                this.FormatCurrency = wNumb({
+                    suffix: this.currency,
+                    decimals: 0,
+                    thousand: '&nbsp;'
+                });
+                this.optionCurrency = {
+                    currency: this.currency,
+                    start: [this.sliderStart],
+                    step: this.sliderStep,
+                    format: {
+                        thousand: '&nbsp;',
+                        prefix: '',
+                        suffix: this.currency,
+                    },
+                    max: this.sliderMax,
+                }
+                this.option = this.optionCurrency;
                 this.render();
             }
             setTimeout(() => this.periodicTranslationCheck(), 1000);
@@ -119,12 +172,12 @@ class TransfactoringCalculator extends HTMLElement {
 
         rangeSlider.noUiSlider.on('update', (values, handle) => {
             // let number = parseInt(values[handle]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "");
-            let number = this.FormatCZK.from(values[handle]);
+            let number = this.FormatCurrency.from(values[handle]);
             const currency = this.option.currency;
-            if (currency === "CZK") {
-                number = this.FormatCZK.to(number);
-            } else {
+            if (currency === "EUR") {
                 number = this.FormatEUR.to(number);
+            } else {
+                number = this.FormatCurrency.to(number);
             }
             rangeSliderValueElement.innerHTML = number;
             this.calculatePrice();
@@ -147,7 +200,7 @@ class TransfactoringCalculator extends HTMLElement {
                 format: wNumb({
                     decimals: 0,
                     thousand: ' ',
-                    suffix: this.translations[9] ?? ' undefined'
+                    suffix: this.dayTranslate ?? ' undefined'
                 })
             },
             range: {
@@ -169,18 +222,18 @@ class TransfactoringCalculator extends HTMLElement {
         const value1 = parseInt(this.shadow.querySelectorAll('#slider1-value')[0].textContent.replace(/\s+/g, '').replace(',', '').replace('€', ''));
         const value2 = parseInt(this.shadow.querySelectorAll('#slider2-value')[0].textContent.replace(/\s+/g, '').replace(',', ''));
 
-        let row1 = value1 * 0.8;
-        let row3 = value1 / 100 * 0.0666 * value2;
-        let row2 = value1 * 0.2 - row3;
+        let row1 = value1 * this.calculationConstant1;
+        let row3 = value1 / 100 * this.calculationConstant3 * value2;
+        let row2 = value1 * this.calculationConstant2 - row3;
 
-        if (this.option.currency === "CZK") {
-            row1 = this.FormatCZK.to(row1);
-            row2 = this.FormatCZK.to(row2);
-            row3 = this.FormatCZK.to(row3);
-        } else {
+        if (this.option.currency === "EUR") {
             row1 = this.FormatEUR.to(row1);
             row2 = this.FormatEUR.to(row2);
             row3 = this.FormatEUR.to(row3);
+        } else {
+            row1 = this.FormatCurrency.to(row1);
+            row2 = this.FormatCurrency.to(row2);
+            row3 = this.FormatCurrency.to(row3);
         }
 
         this.shadow.querySelectorAll('#row1-value')[0].innerHTML = row1;
@@ -194,12 +247,12 @@ class TransfactoringCalculator extends HTMLElement {
         const curSpan = this.shadow.querySelectorAll('#cur-span')[0];
 
         btnCZK.addEventListener('click', () => {
-            if (this.option === this.optionCZK) return;
+            if (this.option === this.optionCurrency) return;
 
             btnEUR.classList.remove('active');
             btnCZK.classList.add('active');
-            this.option = this.optionCZK;
-            curSpan.textContent = this.option.currency;
+            this.option = this.optionCurrency;
+            curSpan.textContent = this.option.currency.trim();
             this.initValueSlider();
         });
 

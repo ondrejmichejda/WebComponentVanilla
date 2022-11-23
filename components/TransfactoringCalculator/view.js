@@ -5,12 +5,12 @@ export const view = (translations, url) => { return `
         <div class="body">
           <div class="header">${translations?.[0] ?? 'undefined'}
           <div class="currencies">
-            <div id="cur-czk" class="currency active">CZK</div>
+            <div id="cur-czk" class="currency active">${translations?.[13].trim()}</div>
             <div id="cur-eur" class="currency">EUR</div>
           </div>
           </div>
     
-          <div class="title">${translations?.[1] ?? 'undefined'}(<span id="cur-span" class="currency">CZK</span>)</div>
+          <div class="title">${translations?.[1] ?? 'undefined'}(<span id="cur-span" class="currency">${translations?.[13].trim()}</span>)</div>
           <div class="slider-value" id="slider1-value">1000 CZK</div>
           <div id="slider1" class="slider"></div>
           <div class="slider-bottom"></div>
