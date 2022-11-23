@@ -63,6 +63,10 @@ class TransfactoringCalculator extends HTMLElement {
      [9] dnů;
      ------------------------
      constants for calculation
+     let row1 = slidervalue1 * this.calculationConstant1;
+     let row3 = slidervalue1 / 100 * this.calculationConstant3 * slidervalue2;
+     let row2 = slidervalue1 * this.calculationConstant2 - row3;
+
      [10]0.8
      [11]0.2
      [12]0.0666
