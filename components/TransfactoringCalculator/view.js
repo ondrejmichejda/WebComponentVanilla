@@ -5,7 +5,7 @@ export const view = (translations, url) => { return `
         <div class="body">
           <div class="header">${translations?.[0] ?? 'undefined'}
           <div class="currencies">
-            <div id="cur-czk" class="currency active">${translations?.[13].trim()}</div>
+            <div id="cur-universal" class="currency active">${translations?.[13].trim()}</div>
             <div id="cur-eur" class="currency">EUR</div>
           </div>
           </div>

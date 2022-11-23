@@ -242,15 +242,15 @@ class TransfactoringCalculator extends HTMLElement {
     }
 
     currencyChangeSubscription() {
-        const btnCZK = this.shadow.querySelectorAll('#cur-czk')[0];
+        const btnUniversalCurrency = this.shadow.querySelectorAll('#cur-universal')[0];
         const btnEUR = this.shadow.querySelectorAll('#cur-eur')[0];
         const curSpan = this.shadow.querySelectorAll('#cur-span')[0];
 
-        btnCZK.addEventListener('click', () => {
+        btnUniversalCurrency.addEventListener('click', () => {
             if (this.option === this.optionCurrency) return;
 
             btnEUR.classList.remove('active');
-            btnCZK.classList.add('active');
+            btnUniversalCurrency.classList.add('active');
             this.option = this.optionCurrency;
             curSpan.textContent = this.option.currency.trim();
             this.initValueSlider();
@@ -259,7 +259,7 @@ class TransfactoringCalculator extends HTMLElement {
         btnEUR.addEventListener('click', () => {
             if (this.option === this.optionEUR) return;
 
-            btnCZK.classList.remove('active');
+            btnUniversalCurrency.classList.remove('active');
             btnEUR.classList.add('active');
             this.option = this.optionEUR;
             curSpan.textContent = this.option.currency;
