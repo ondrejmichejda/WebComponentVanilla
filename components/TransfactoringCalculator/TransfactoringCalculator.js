@@ -134,6 +134,12 @@ class TransfactoringCalculator extends HTMLElement {
     }
 
     render() {
+        const innerText = this.innerHTML.trim();
+        if(innerText === 'null' || innerText == null || innerText === ''){
+            this.shadow.innerHTML = '';
+            return;
+        }
+
         this.shadow.innerHTML = view(this.translations, this.url);
 
         this.shadow.innerHTML += noUiSliderStyle;
